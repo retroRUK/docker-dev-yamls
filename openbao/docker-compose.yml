@@ -1,0 +1,19 @@
+services:
+  openbao:
+    image: openbao/openbao:latest
+    volumes:
+      - openbao-data:/openbao/data
+      - ../certs:/openbao/certs
+      - ./config:/openbao/config
+    ports:
+      - 8200:8200 
+    networks:
+      - openbao
+    command: server -config=/openbao/config/config.hcl
+
+networks:
+  openbao:
+    driver: bridge
+
+volumes:
+  openbao-data:

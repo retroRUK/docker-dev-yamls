@@ -1,0 +1,31 @@
+services:
+  rabbitmq:
+    image: rabbitmq:4.2-management
+    ports:
+      - "5671:5671"    # AMQPS
+      - "5672:5672"    # AMQP
+      - "15671:15671"  # Management UI HTTPS
+      - "15672:15672"  # Management UI HTTP
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin
+      RABBITMQ_DEFAULT_VHOST: /
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+      - ./config/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+      - ../certs:/etc/rabbitmq/certs:ro
+    networks:
+      - rabbitmq
+    restart: unless-stopped
+    healthcheck:
+      test: rabbitmq-diagnostics check_running
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+networks:
+  rabbitmq:
+    driver: bridge
+
+volumes:
+  rabbitmq-data:
